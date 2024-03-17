@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { ethers } from "ethers";
 import { evmOut } from "./ContractAbi/MMultisigABI";
-import { walletConnect } from "./ethersConnect/connectWallet";
+import { walletConnect } from "./ethersServices/connectWallet";
 
 function App() {
   // const [count, setCount] = useState(0);
