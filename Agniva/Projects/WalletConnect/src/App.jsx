@@ -6,7 +6,7 @@ import { connectWallet } from "./connectWallet";
 import { ethers } from "ethers";
 import { deployContract } from "./deployContract";
 import { connectContract } from "./connectExistingContract";
-import data from "../artifacts/contracts/WEB3ETH.sol/WEB3ETH.json";
+import { evmOut } from "./contractAbis/dataObject";
 
 function App() {
   // let providerMock;
@@ -61,7 +61,7 @@ function App() {
             e.preventDefault();
             connectContract({
               address: e.target[0].value,
-              abi: data.abi,
+              abi: evmOut.abi2,
               signer: signerMain,
             });
           }}

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import data from "../artifacts/contracts/ModifiedMultisig.sol/EnhancedMultisigWallet.json";
+// import data from "../artifacts/contracts/ModifiedMultisig.sol/EnhancedMultisigWallet.json";
 
 export const deployContract = async ({ signerInitial }) => {
   const NewContract = new ethers.ContractFactory(
