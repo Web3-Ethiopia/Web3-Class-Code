@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { deployContract } from "./deployContract";
 import { connectContract } from "./connectExistingContract";
 import { evmOut } from "./contractAbis/dataObject";
+import { FileUploader } from "./AppUploadPinata";
 
 function App() {
   // let providerMock;
@@ -73,6 +74,7 @@ function App() {
             Submit
           </button>
         </form>
+        <FileUploader />
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
