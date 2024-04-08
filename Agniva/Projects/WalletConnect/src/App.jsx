@@ -74,6 +74,25 @@ function App() {
             Submit
           </button>
         </form>
+
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            // tx address 0x4ba9edd9d7064bdd3a74be9fbc8b7bacbd330ed16b17deda82c7ba83a62f686e
+            const chainID = await providerMain.send(e.target[0].value, [
+              "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            ]);
+
+            // const chainIDD= ethers.
+            console.log(chainID);
+          }}
+        >
+          <input type="text"></input>
+          <button type="submit" className="p-2">
+            Debug info
+          </button>
+        </form>
+
         <FileUploader />
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
