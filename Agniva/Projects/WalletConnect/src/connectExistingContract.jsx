@@ -14,6 +14,8 @@ export const connectContract = async ({ address, abi, signer }) => {
     ]("0xc59E3633BAAC79493d908e63626716e204A45EdF", 0)
   );
 
+  
+
   // const getCurrentPrice2 = Number(
   //   await ContractToConnect.getCurrentPrice(
   //     "0xc59E3633BAAC79493d908e63626716e204A45EdF",

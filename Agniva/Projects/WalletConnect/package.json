@@ -10,10 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@celo/abis": "^11.0.0",
+    "@celo/identity": "^5.1.2",
+    "@ngrok/ngrok": "^1.2.0",
     "@openzeppelin/contracts": "^5.0.2",
     "@pinata/sdk": "^2.1.0",
     "ethers": "^6.11.1",
     "hardhat": "^2.22.1",
+    "localtunnel": "^2.0.2",
+    "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -26,6 +31,8 @@
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.1.6"
+    "vite": "^5.1.6",
+    "vite-plugin-require": "^1.1.14",
+    "vite-require": "^0.2.3"
   }
 }
