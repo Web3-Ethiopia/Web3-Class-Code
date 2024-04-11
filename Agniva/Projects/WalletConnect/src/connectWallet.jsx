@@ -2,9 +2,9 @@ import { ethers } from "ethers";
 import { evmOut } from "./contractAbis/dataObject";
 // import { viteRequire } from ;
 // import { forward } from "@ngrok/ngrok";
-import { stableTokenABI } from "@celo/abis";
+import { stableTokenABI, iCeloTokenABI } from "@celo/abis";
 
-const STABLE_TOKEN_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
+const STABLE_TOKEN_ADDRESS = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
 
 const { Contract, utils, providers } = ethers;
 // const { formatEther } = utils;
@@ -17,6 +17,7 @@ async function checkCUSDBalance(provider, address) {
   );
 
   let balanceInBigNumber = await StableTokenContract.balanceOf(address);
+  balanceInBigNumber = Number(balanceInBigNumber) / 10 ** 18;
 
   let balanceInWei = balanceInBigNumber.toString();
 
@@ -29,26 +30,28 @@ async function checkCUSDBalance(provider, address) {
 
 // In Ether unit
 
-export const connectWallet = async () => {
-  if (window.ethereum && window.ethereum.isMinipay) {
+export const connectWallet = async ({
+  addressToCheck: addressToCheckBalance,
+}) => {
+  if (window.ethereum && window.ethereum.isMiniPay) {
     const provider1 = new ethers.BrowserProvider(window.ethereum);
     const signerInitial = await provider1.getSigner();
 
-    let balance = await checkCUSDBalance(
-      provider1,
-      "0x5cf10ee9797c7d6c60305f8b1bea60cff2ead46e"
-    );
+    const bigInter = BigInt(10 ** 100);
+
+    let balance = await checkCUSDBalance(provider1, addressToCheckBalance);
+
+    // const authState = await forward({
+    //   addr: 5173,
+    //   authtoken: import.meta.env.NGROK_KEY,
+    // });
+
+    // const url = await connect(5174);
+    // console.log(authState);
+    return [provider1, signerInitial, balance];
+  } else {
+    return [0, 0, 10];
   }
-
-  // const authState = await forward({
-  //   addr: 5173,
-  //   authtoken: import.meta.env.NGROK_KEY,
-  // });
-  console.log(balance);
-
-  // const url = await connect(5174);
-  // console.log(authState);
-  return [provider1, signerInitial];
 };
 
 export const deployContract = () => {};

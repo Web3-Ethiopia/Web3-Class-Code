@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -13,6 +13,8 @@ function App() {
   // let providerMock;
   const [providerMain, setProviderMain] = useState("");
   const [signerMain, setSignerMain] = useState("");
+  const [balanceMain, updateBalance] = useState(0);
+  const addressInput = useRef();
 
   console.log(providerMain, signerMain);
 
@@ -32,11 +34,21 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
+        <input
+          type="text"
+          id="addressBalance"
+          placeholder="addressBalance"
+          ref={addressInput}
+        ></input>
+
         <button
           onClick={async () => {
-            const [providerInitial, signerInitial] = await connectWallet();
+            const addressBalance = addressInput.current.value;
+            const [providerInitial, signerInitial, balance] =
+              await connectWallet({ addressToCheck: addressBalance });
 
             setProviderMain(providerInitial);
+            updateBalance(balance);
             setSignerMain(signerInitial);
           }}
         >
@@ -98,9 +110,7 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p className="read-the-docs">{balanceMain}</p>
     </>
   );
 }
