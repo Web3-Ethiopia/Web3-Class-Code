@@ -31,14 +31,15 @@ async function checkCUSDBalance(provider, address) {
 
 export const connectWallet = async () => {
   if (window.ethereum && window.ethereum.isMinipay) {
-  }
-  const provider1 = new ethers.BrowserProvider(window.ethereum);
-  const signerInitial = await provider1.getSigner();
+    const provider1 = new ethers.BrowserProvider(window.ethereum);
+    const signerInitial = await provider1.getSigner();
 
-  let balance = await checkCUSDBalance(
-    provider1,
-    "0x5cf10ee9797c7d6c60305f8b1bea60cff2ead46e"
-  );
+    let balance = await checkCUSDBalance(
+      provider1,
+      "0x5cf10ee9797c7d6c60305f8b1bea60cff2ead46e"
+    );
+  }
+
   // const authState = await forward({
   //   addr: 5173,
   //   authtoken: import.meta.env.NGROK_KEY,
