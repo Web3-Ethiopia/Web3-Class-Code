@@ -10,14 +10,14 @@ contract CometScript is Script {
     
     function setUp() public {
         
-        MainContract=new InteractFromPool(0xE3E0106227181958aBfbA960C13d0Fe52c733265);
+        MainContract=new InteractFromPool(0x2D5ee574e710219a521449679A4A7f2B43f046ad,0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
     }
 
     function run() public {
         uint256 CompAccount=vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(CompAccount);
         // MainContract.setFactory()
-        MainContract.supplyCollateral(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531, 100000000000000 );
+        MainContract.supplyCollateral{value:1000000000000000000000}();
     }
 }
 
