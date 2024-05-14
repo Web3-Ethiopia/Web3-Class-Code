@@ -15,25 +15,20 @@ contract CometTest is Test {
 
         // vm.startPrank(CompAccount);
         // MainContract=new LendingPoolSetup(0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e,0xc28aD44975C614EaBe0Ed090207314549e1c6624);
-        MainContract=new InteractFromPool(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238,0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
+        MainContract=new InteractFromPool(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531,0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
     }
 
-    function testSetup() public {
+    function testFuzz_Setup() public {
        
         // MainContract.setFactory()
         address accountMain=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         
         vm.startPrank(accountMain);
-        deal(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238,address(MainContract), 10000000000000);
-        console.log(IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238).balanceOf(address(MainContract)));
-        MainContract.supplyCollateral{value:10000000}();
-        console.log(IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238).balanceOf(address(MainContract)));
-        // MainContract.WithdrawAsset(700000000000000000000);
-
-        // MainContract.BorrowAsset(0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e, 200000); //Under development
-        // console.log(accountMain.balance);
-        // console.log(address(MainContract).balance);
-        // MainContract.BalanceCheck();
+        deal(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531,address(MainContract), 10e20);
+        
+        // console.log(IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238).balanceOf(address(MainContract)));
+        MainContract.supplyCollateral{value:10e19}();
+        MainContract.BorrowAsset(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238, 10e8); //Borrow USDC using Compound supply provided above
     }
 
     function run() public{

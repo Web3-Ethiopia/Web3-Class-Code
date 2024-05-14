@@ -13,11 +13,11 @@ interface IWETH is IERC20{
 
 contract InteractFromPool {
     CometInterface public comet;
-    IERC20 public interfaceWETH;
+    IERC20 public interfaceCOMP;
 
     constructor(address _assetAddress,address _cometProxy) {
         comet = CometInterface(_cometProxy);
-        interfaceWETH= IERC20(_assetAddress);
+        interfaceCOMP= IERC20(_assetAddress);
     }
 
     receive() external payable { }
@@ -31,15 +31,19 @@ contract InteractFromPool {
         
 
 
-        // payable(address(this)).call{value:amount}(""); //funding the contract with the required eth to convert into WETH for supply
-        // interfaceWETH.transfer(address(this),amountSupply*9/10);
-        console.log(interfaceWETH.balanceOf(address(this)));
-        // console.log(interfaceWETH.balanceOf(address(this)));
-        // interfaceWETH.deposit{value:amountSupply}(); //using WETH contract to deposit eth and get wETH for supplying to the comet proxy
+    
 
-        interfaceWETH.approve(address(comet),amountSupply*9/10); //approval given to comet proxy for moving wEth
+        interfaceCOMP.approve(address(comet),amountSupply*9/10); //approval given to comet proxy for moving COMP
 
-        comet.supply(address(interfaceWETH), amountSupply*9/10); //supply cometProxy with the wETH to increase collateral position
+        console.log(comet.balanceOf(address(this)));
+        
+        comet.supply(address(interfaceCOMP), amountSupply*9/10);
+        console.log(comet.balanceOf(address(this)));
+        // console.log(IERC20(interfaceWETH).balanceOf(address(this)));
+        // comet.collateralBalanceOf(, address(interfaceWETH));
+         //supply cometProxy with the wETH to increase collateral position
+
+        
         // 100000000000
         // 90000000000
     }
@@ -48,25 +52,30 @@ contract InteractFromPool {
         return address(this).balance;
     }
 
+     function isBorrowAllowed() public returns (bool){
+        return comet.isBorrowCollateralized(address(this));
+    }
+
+
     function WithdrawAsset(uint256 _amount)public {
         console.log(address(this).balance);
-        comet.withdraw(address(interfaceWETH),_amount); // currently withdrawing  wETH incase of a different asset will be considered as borrowing
-        interfaceWETH.transfer(address(this),_amount); //withdrawl from wETH to ETH into this contract
+        
+        comet.withdraw(address(interfaceCOMP),_amount); // currently withdrawing  wETH incase of a different asset will be considered as borrowing
+        interfaceCOMP.transfer(address(this),_amount); //withdrawl from wETH to ETH into this contract
         // console.log(address(this).balance);
         msg.sender.call{value:_amount}(""); //Eth back to msg.sender
         // comet.collateralBalanceOf(address(this), address(interfaceWETH));
     }
 
     function BorrowAsset(address _asset,uint256 _amount)public {
-        console.log(address(this).balance);
+        //Borrow USDC from collateral provided in COMP during initialising
+
+        console.log(IERC20(_asset).balanceOf(address(this))); // balance check for USDC = 0
+
+        comet.withdraw(_asset,_amount); // withdrawing USDC based on COMP supplied as collateral
+      
+        console.log(IERC20(_asset).balanceOf(address(this))); // borrowed USDC updates the balance
         
-        comet.buyCollateral(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238, 0, _amount, address(this));
-        comet.withdraw(_asset,_amount); // currently withdrawing  wETH incase of a different asset will be considered as borrowing
-        // interfaceWETH.withdraw(_amount); //withdrawl from wETH to ETH into this contract
-        // console.log(address(this).balance);
-        console.log(IERC20(_asset).balanceOf(address(this)));
-        // msg.sender.call{value:_amount}(""); //Eth back to msg.sender
-        // comet.collateralBalanceOf(address(this), address(interfaceWETH));
     }
 
     
