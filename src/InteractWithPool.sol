@@ -14,6 +14,7 @@ interface IWETH is IERC20{
 contract InteractFromPool {
     CometInterface public comet;
     IERC20 public interfaceCOMP;
+    address public constant USDCBase=0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
 
     constructor(address _assetAddress,address _cometProxy) {
         comet = CometInterface(_cometProxy);
@@ -56,25 +57,39 @@ contract InteractFromPool {
         return comet.isBorrowCollateralized(address(this));
     }
 
+    function isLiquidatable() public returns (bool){
+        return comet.isLiquidatable(address(this));
+    }
+
+    function BuyCollateral(address _asset, uint256 usdcAmount) public {
+
+        IERC20(USDCBase).transferFrom(tx.origin, address(this), 10e11);
+        console.log(IERC20(USDCBase).balanceOf(address(this)));
+        IERC20(USDCBase).approve(address(comet), 10e10);
+        comet.buyCollateral(_asset, 0, 1, msg.sender);
+    }
+
 
     function WithdrawAsset(uint256 _amount)public {
         console.log(address(this).balance);
-        
+        // comet.priceScale();
         comet.withdraw(address(interfaceCOMP),_amount); // currently withdrawing  wETH incase of a different asset will be considered as borrowing
-        interfaceCOMP.transfer(address(this),_amount); //withdrawl from wETH to ETH into this contract
+        // interfaceCOMP.transfer(address(this),_amount); //withdrawl from wETH to ETH into this contract
         // console.log(address(this).balance);
-        msg.sender.call{value:_amount}(""); //Eth back to msg.sender
+        // msg.sender.call{value:_amount}(""); //Eth back to msg.sender
         // comet.collateralBalanceOf(address(this), address(interfaceWETH));
     }
 
     function BorrowAsset(address _asset,uint256 _amount)public {
         //Borrow USDC from collateral provided in COMP during initialising
 
-        console.log(IERC20(_asset).balanceOf(address(this))); // balance check for USDC = 0
-
+        // console.log(IERC20(_asset).balanceOf(address(this))); // balance check for USDC = 0
+        console.log(comet.getCollateralReserves(_asset));
         comet.withdraw(_asset,_amount); // withdrawing USDC based on COMP supplied as collateral
-      
-        console.log(IERC20(_asset).balanceOf(address(this))); // borrowed USDC updates the balance
+        comet.borrowBalanceOf(address(this));
+
+        IERC20(_asset).transfer(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, _amount-100000);
+        // console.log(IERC20(_asset).balanceOf(address(this))); // borrowed USDC updates the balance
         
     }
 
