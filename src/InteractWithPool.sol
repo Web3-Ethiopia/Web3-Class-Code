@@ -23,6 +23,7 @@ contract InteractFromPool {
 
     receive() external payable { }
 
+
     function supplyCollateral() external payable {
         
         // Supply collateral
@@ -84,13 +85,33 @@ contract InteractFromPool {
         //Borrow USDC from collateral provided in COMP during initialising
 
         // console.log(IERC20(_asset).balanceOf(address(this))); // balance check for USDC = 0
-        console.log(comet.getCollateralReserves(_asset));
+        // console.log(comet.getCollateralReserves(_asset));
         comet.withdraw(_asset,_amount); // withdrawing USDC based on COMP supplied as collateral
         comet.borrowBalanceOf(address(this));
 
-        IERC20(_asset).transfer(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, _amount-100000);
+        IERC20(_asset).transfer(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, _amount);
+
+
+
         // console.log(IERC20(_asset).balanceOf(address(this))); // borrowed USDC updates the balance
         
+    }
+
+    function getSuppleAPR() public returns(uint64){
+             uint util=comet.getUtilization();
+             return comet.getSupplyRate(util);
+    }
+
+    function getBorrowAPR()public returns(uint256){
+            uint util=comet.getUtilization();
+            console.log(util/10e17);
+            uint64 borrowRate= comet.getBorrowRate(util);
+            console.log(borrowRate);
+            uint256 APR=borrowRate*864*365/1e13;
+            comet.accrueAccount(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
+            console.log(IERC20(address(interfaceCOMP)).balanceOf(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266));
+            console.log(APR);
+            return APR;
     }
 
     

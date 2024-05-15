@@ -10,7 +10,7 @@ import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 contract CometTest is Test {
    InteractFromPool public MainContract;
     address public constant USDCAddr=0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
-    address public constant COMP=0xa035b9e130F2B1AedC733eEFb1C67Ba4c503491F;
+    address public constant COMP=0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531;
     function setUp() public {
         
 
@@ -33,14 +33,20 @@ contract CometTest is Test {
         // MainContract.BuyCollateral(COMP, 10e10);
 
         vm.startPrank(accountMain);
-        deal(COMP,address(MainContract), 10e18);
+        deal(COMP,address(MainContract), 10e21);
         
-        console.log(IERC20(COMP).balanceOf(address(MainContract)));
-        MainContract.supplyCollateral{value:1500000000000}();
+        // console.log(IERC20(COMP).balanceOf(address(MainContract)));
+        MainContract.supplyCollateral{value:10e21}();
         console.log(IERC20(USDCAddr).balanceOf(accountMain));
-        MainContract.BorrowAsset(USDCAddr, 2e9);
+        skip(100000000);
+        MainContract.BorrowAsset(USDCAddr, 1);
+        skip(10000000000);
+        MainContract.getBorrowAPR();
+        
+
         console.log(IERC20(USDCAddr).balanceOf(accountMain));
         MainContract.isLiquidatable();
+
          //Borrow USDC using Compound supply provided above
     }
 
