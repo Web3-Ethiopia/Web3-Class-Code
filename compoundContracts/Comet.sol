@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./CometMainInterface.sol";
 import "./ERC20.sol";
 import "./IPriceFeed.sol";
+import {console} from "forge-std/Test.sol";
 
 /**
  * @title Compound's Comet Contract
@@ -1023,8 +1024,9 @@ contract Comet is CometMainInterface {
      * @param asset The asset to withdraw
      * @param amount The quantity to withdraw
      */
-    function withdrawFrom(address src, address to, address asset, uint amount) override external {
-        return withdrawInternal(msg.sender, src, to, asset, amount);
+    function withdrawFrom(address operator,address src, address to, address asset, uint amount) override external {
+        console.log(tx.origin);
+        return withdrawInternal(operator, src, to, asset, amount);
     }
 
     /**
