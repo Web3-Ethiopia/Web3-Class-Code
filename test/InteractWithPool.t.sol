@@ -14,29 +14,26 @@
 //     address constant private accountMain=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
 //     address constant private collateralBuyer=0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 //     function setUp() public {
-        
 
 //         // vm.startPrank(CompAccount);
 //         vm.startPrank(accountMain,accountMain);
 //         // MainContract=new LendingPoolSetup(0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e,0xc28aD44975C614EaBe0Ed090207314549e1c6624);
-//         MainContract=new InteractFromPool(COMP,0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e); 
-//         //1st address is the supplyAsset 
+//         MainContract=new InteractFromPool(COMP,0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
+//         //1st address is the supplyAsset
 //         //2nd address is the baseAsset proxy (USDC from compound)
 //     }
 
 //     function testFuzz_Setup() public {
-       
+
 //         // MainContract.setFactory()
-        
-        
+
 //         // vm.startPrank(collateralBuyer);
-//         // deal(USDCAddr,collateralBuyer, 10e12); 
+//         // deal(USDCAddr,collateralBuyer, 10e12);
 //         // IERC20(USDCAddr).approve(address(MainContract), 10e11);
 //         // MainContract.BuyCollateral(COMP, 10e10);
 
-        
 //         deal(COMP,address(MainContract), 10e21);
-        
+
 //         // console.log(IERC20(COMP).balanceOf(address(MainContract)));
 //         MainContract.supplyCollateral{value:10e21}();
 //         console.log(IERC20(USDCAddr).balanceOf(accountMain));
@@ -46,10 +43,7 @@
 //         //     skip(31536000);
 //         // }
 
-
-        
 //         MainContract.getBorrowAPR();
-        
 
 //         console.log(IERC20(USDCAddr).balanceOf(accountMain));
 //         MainContract.isLiquidatable();

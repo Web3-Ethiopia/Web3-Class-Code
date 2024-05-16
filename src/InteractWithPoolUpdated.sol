@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
 import "./DelegateCallHandler.sol";
 import "../compoundContracts/CometInterface.sol";
 import "../compoundContracts/CometRewards.sol";
@@ -7,8 +8,8 @@ import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {console} from "forge-std/Test.sol";
 
 interface IWETH is IERC20 {
-    function withdraw(uint) external;
-    function deposit() payable external;
+    function withdraw(uint256) external;
+    function deposit() external payable;
 }
 
 contract InteractFromPool {
@@ -28,13 +29,14 @@ contract InteractFromPool {
 
     receive() external payable {}
 
-    function supplyCollateral() external payable {
-        uint256 amount = msg.value;
+    function supplyCollateral(uint256 amount) external payable {
         uint256 amountSupply = amount * 9 / 10;
-        
+
         // interfaceCOMP.approve(address(comet), amountSupply);
-        (bool success, ) = address(delegateCallHandler).delegatecall(abi.encodeWithSignature("supply(address,uint)", tx.origin,amountSupply));
-        require(success, "Delegatecall failed");
+        (bool success,) = address(delegateCallHandler).delegatecall(
+            abi.encodeWithSignature("supply(address,uint)", address(interfaceCOMP), amountSupply)
+        );
+        // require(success, "Delegatecall failed");
         // comet.supply(address(interfaceCOMP), amountSupply);
     }
 
@@ -57,22 +59,25 @@ contract InteractFromPool {
     }
 
     function BorrowAsset(address _asset, uint256 _amount) public {
-        comet.withdrawTo(tx.origin, _asset, _amount);
+        (bool success,) = address(delegateCallHandler).delegatecall(
+            abi.encodeWithSignature("withraw(address,uint)", tx.origin, _amount)
+        );
+        require(success, "Delegatecall failed");
     }
 
     function getSuppleAPR() public returns (uint64) {
-        uint util = comet.getUtilization();
+        uint256 util = comet.getUtilization();
         return comet.getSupplyRate(util);
     }
 
     function getBorrowAPR() public returns (uint256) {
-        uint util = comet.getUtilization();
+        uint256 util = comet.getUtilization();
         uint64 borrowRate = comet.getBorrowRate(util);
         uint256 APR = borrowRate * 864 * 365 / 1e13;
 
         // Use delegatecall to execute comet.accrueAccount with tx.origin context
-        (bool success, ) = address(delegateCallHandler).delegatecall(abi.encodeWithSignature("accrueAccount(address)", tx.origin));
-        require(success, "Delegatecall failed");
+        // (bool success, ) = address(delegateCallHandler).delegatecall(abi.encodeWithSignature("accrueAccount(address)", tx.origin));
+        // require(success, "Delegatecall failed");
 
         CometRewards.RewardOwed memory rewardDetails = delegateCallHandler.getRewardOwed(address(comet), tx.origin);
         return APR;
