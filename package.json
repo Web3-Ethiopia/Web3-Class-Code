@@ -1,0 +1,16 @@
+{
+  "name": "web3-class-code",
+  "version": "1.0.0",
+  "description": "- Run anvil forking with your respective sepolia RPC endpoint.\r - Make the test calls by forking the local anvil instance usually hosted at http://127.0.0.1:8545",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
