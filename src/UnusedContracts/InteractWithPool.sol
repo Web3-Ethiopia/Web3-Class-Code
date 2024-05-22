@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../compoundContracts/CometInterface.sol";
-import "../compoundContracts/CometRewards.sol";
+import "../../compoundContracts/CometInterface.sol";
+import "../../compoundContracts/CometRewards.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {console} from "forge-std/Test.sol";
 
@@ -18,6 +18,18 @@ contract InteractFromPool {
     address public constant USDCBase = 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
     address public constant RewardsAddr = 0x8bF5b658bdF0388E8b482ED51B14aef58f90abfD;
 
+
+    
+    struct USER{
+        uint256 supply;
+        bool isBorrowing;
+        uint256 totalBorrowAmount;
+        mapping(address asset=>uint256) SuppliedCollaterals;
+        bool canBorrow;
+    }
+
+    // mapping(address=>USER);
+
     constructor(address _assetAddress, address _cometProxy) {
         comet = CometInterface(_cometProxy);
         interfaceCOMP = IERC20(_assetAddress);
@@ -32,7 +44,7 @@ contract InteractFromPool {
         uint256 amount = msg.value;
         uint256 amountSupply = amount * 9 / 10; // supply amount should have room for some gas
 
-        interfaceCOMP.approve(address(comet), amountSupply * 9 / 10); //approval given to comet proxy for moving COMP
+        interfaceCOMP.approve(address(comet), amountSupply); //approval given to comet proxy for moving COMP
 
         console.log("balance before supply");
         // console.log(comet.balanceOf(address(this)));

@@ -27,17 +27,33 @@ contract InteractFromPool {
         delegateCallHandler = DelegateCallHandler(_delegateCallHandler);
     }
 
+
+
+    struct USER{
+        uint256 supply;
+        bool isBorrowing;
+        uint256 totalBorrowAmount;
+        mapping(address asset=>uint256) SuppliedCollaterals;
+        address[] lender;
+        bool canBorrow;
+    }
+
+    // mapping(address=>USER);
     receive() external payable {}
 
     function supplyCollateral(uint256 amount) external payable {
-        uint256 amountSupply = amount * 9 / 10;
+        // comet.getAssetInfoByAddress(asset);
 
-        // interfaceCOMP.approve(address(comet), amountSupply);
-        (bool success,) = address(delegateCallHandler).delegatecall(
-            abi.encodeWithSignature("supply(address,uint)", address(interfaceCOMP), amountSupply)
-        );
+        // require(condition);
+        uint256 amountSupply = amount * 9 / 10;
+        USER mainUser=new USER;
+        interfaceCOMP.approve(address(comet), amountSupply);
+        // (bool success,) = address(delegateCallHandler).delegatecall(
+        //     abi.encodeWithSignature("supply(address,uint)", address(interfaceCOMP), amountSupply)
+        // );
         // require(success, "Delegatecall failed");
-        // comet.supply(address(interfaceCOMP), amountSupply);
+        // comet.getAssetInfoByAddress(asset);
+        comet.supply(address(interfaceCOMP), amountSupply *9/10);
     }
 
     function isBorrowAllowed() public returns (bool) {
@@ -62,6 +78,8 @@ contract InteractFromPool {
         (bool success,) = address(delegateCallHandler).delegatecall(
             abi.encodeWithSignature("withraw(address,uint)", tx.origin, _amount)
         );
+
+        // CometInterface(_cometProxy);
         require(success, "Delegatecall failed");
     }
 

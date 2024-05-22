@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Script, console} from "forge-std/Script.sol";
-import "../src/CompoundMain.sol";
+// import "../src/CompoundMain.sol";
 import {InteractFromPool} from "../src/InteractWithPoolUpdated.sol";
 import "../src/DelegateCallHandler.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
