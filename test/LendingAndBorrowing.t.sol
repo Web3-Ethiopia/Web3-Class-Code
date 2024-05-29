@@ -17,15 +17,18 @@ contract LendingAndBorrowingTest is Test {
 
   // Invariant test for user's total supplied being greater than or equal to total borrowed
   function testTotalSuppliedGreaterThanBorrowed() public {
+    
     // Arrange
-    address user = address(this); // Test contract as the user
+    address user = address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266); // Test contract as the user
     uint256 supplyAmount = 10e21;
+    vm.startPrank(user);
 
 
 
     deal(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531,address(user), 10e25);
+    // IERC20(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531).transfer(address(lendingAndBorrowing), 10e22);
     IERC20(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531).approve(address(lendingAndBorrowing), 10e23);
-
+    console.log(IERC20(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531).balanceOf(address(lendingAndBorrowing)));
     // Act
     lendingAndBorrowing.supplyCollateral(0xA6c8D1c55951e8AC44a0EaA959Be5Fd21cc07531, supplyAmount); // Replace with actual token address
 
@@ -41,4 +44,9 @@ contract LendingAndBorrowingTest is Test {
   // - User's supplied allocation percentages add up to 100%
   // - User's share reflects their contribution to the pool (consider specific pool logic)
   // ... (add more tests based on your contract logic)
+
+
+
+//   Comet
+
 }

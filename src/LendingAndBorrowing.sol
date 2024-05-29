@@ -5,6 +5,7 @@ import "../compoundContracts/CometInterface.sol";
 import "../compoundContracts/CometRewards.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 // import "./DelegateCallHandler.sol";
+import {console} from "forge-std/Test.sol";
 
 contract LendingAndBorrowing {
     struct USER { 
@@ -22,10 +23,10 @@ contract LendingAndBorrowing {
     CometRewards public rewards;
     // DelegateCallHandler public delegateCallHandler;
 
-    constructor(address _cometProxy, address _rewardsAddr) {
+    constructor(address _cometProxy, address _rewardsAddr) payable {
         require(_cometProxy!= address(0), "Comet proxy address cannot be zero");
         require(_rewardsAddr!= address(0), "Rewards address cannot be zero");
-        
+        console.log(msg.sender);
 
         comet = CometInterface(_cometProxy);
         rewards = CometRewards(_rewardsAddr);
@@ -45,13 +46,18 @@ contract LendingAndBorrowing {
     }
 
     function supplyCollateral(address token, uint256 amount) external {
-        IERC20(token).transferFrom(msg.sender, token, amount+1000);
+        IERC20(token).transferFrom(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, address(this), amount+1000); // tx.origin for production env't
         IERC20(token).approve(address(comet), amount);
         comet.supply(token, amount);
         USER storage user = users[msg.sender];
         user.supply += amount;
         user.collateralBalance[token] += amount;
         user.suppliedCollaterAssets.push(address(token));
+    }
+
+    function isBorrowAllowed() public view returns(bool) {
+        return comet.isBorrowCollateralized(msg.sender);
+
     }
 
 
@@ -102,4 +108,14 @@ contract LendingAndBorrowing {
     }
 
     // Additional functions as needed
+
+    // function isLiquidatable() public returns (bool) {
+    //     return comet.isLiquidatable(tx.origin);
+    // }
+
+    // function BuyCollateral(address _asset, uint256 usdcAmount) public {
+    //     IERC20(USDCBase).transferFrom(tx.origin, address(this), usdcAmount);
+    //     IERC20(USDCBase).approve(address(comet), usdcAmount);
+    //     comet.buyCollateral(_asset, 0, 1, tx.origin);
+    // }
 }

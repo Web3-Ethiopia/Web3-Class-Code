@@ -1,1 +1,3 @@
 ## test text
+
+-c 'Get-ManagementRoleAssignment -role "Mailbox Import Export" -GetEffectiveUsers'
