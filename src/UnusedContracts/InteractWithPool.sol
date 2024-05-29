@@ -30,7 +30,7 @@ contract InteractFromPool {
 
     // mapping(address=>USER);
 
-    constructor(address _assetAddress, address _cometProxy) {
+    constructor(address _assetAddress, address _cometProxy) payable {
         comet = CometInterface(_cometProxy);
         interfaceCOMP = IERC20(_assetAddress);
         rewards = CometRewards(RewardsAddr);
@@ -50,7 +50,7 @@ contract InteractFromPool {
         // console.log(comet.balanceOf(address(this)));
 
         console.log(IERC20(interfaceCOMP).balanceOf(address(this)));
-        comet.supplyTo(msg.sender, address(interfaceCOMP), amountSupply * 9 / 10);
+        comet.supply(address(interfaceCOMP), amountSupply * 9 / 10);
         console.log("balance post supply");
         console.log(comet.collateralBalanceOf(msg.sender, address(interfaceCOMP)));
         console.log(IERC20(interfaceCOMP).balanceOf(address(this)));
