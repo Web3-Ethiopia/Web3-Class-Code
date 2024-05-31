@@ -36,12 +36,12 @@ contract CometTest is Test {
         // IERC20(USDCAddr).approve(address(MainContract), 10e11);
         // MainContract.BuyCollateral(COMP, 10e10);
         deal(USDCAddr,accountMain, 10e21);
-        // vm.startPrank();
-        comet=CometInterface(0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
-        IERC20(USDCAddr).approve(address(comet), 10e20);
-        comet.supply(USDCAddr, 10e18);
+        // // vm.startPrank();
+        // comet=CometInterface(0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e);
+        // IERC20(USDCAddr).approve(address(comet), 10e20);
+        // comet.supply(USDCAddr, 10e18);
        
-        deal(COMP,address(MainContract), 10e22);
+        deal(COMP,accountMain, 10e23);
 
         // vm.startPrank(collateralBuyer);
         // IERC20(COMP).approve(address(comet),10e21);
@@ -53,19 +53,22 @@ contract CometTest is Test {
         
         // comet.withdraw(USDCAddr, 10e10);
 
-        MainContract.supplyCollateral{value:10e21}();
+        MainContract.supplyCollateralMain(10e21);
+        // MainContract.supplyCollateral{value:10e21}();
+        // MainContract.supplyCollateralMain(10e21);
+        // comet.getCollateralReserves(USDCAddr);
 
-        console.log("Balance after usdc borrow");
-        console.log(IERC20(USDCAddr).balanceOf(address(MainContract)));
+        // console.log("Balance after usdc borrow");
+        // console.log(IERC20(USDCAddr).balanceOf(address(MainContract)));
         // skip(100000000);
-        MainContract.BorrowAsset(USDCAddr, 10e10);
+        // MainContract.BorrowAsset(USDCAddr, 1e7);
         // for(uint256 i=0; i<105;i++){
         //     skip(31536000);
         // }
 
         // MainContract.getBorrowAPR();
 
-        console.log(IERC20(USDCAddr).balanceOf(address(MainContract)));
+        // console.log(IERC20(USDCAddr).balanceOf(address(MainContract)));
         // MainContract.isLiquidatable();
 
          //Borrow USDC using Compound supply provided above

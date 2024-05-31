@@ -1,0 +1,3 @@
+anvil --fork-url {Your rpc api key from INFURA/ALCHEMY/ANKR}
+forge test --fork-url http://127.0.0.1:8545
+forge script script/Compound.s.sol:CometScript --rpc-url http://127.0.0.1:8545

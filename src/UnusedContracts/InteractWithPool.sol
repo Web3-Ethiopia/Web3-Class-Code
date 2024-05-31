@@ -11,14 +11,22 @@ interface IWETH is IERC20 {
     function deposit() external payable;
 }
 
+
+contract MockCall{
+    function findSender()public view returns (address){
+        return msg.sender;
+    }
+}
+
 contract InteractFromPool {
     CometRewards public rewards;
     CometInterface public comet;
     IERC20 public interfaceCOMP;
+    MockCall public callContract;
     address public constant USDCBase = 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
     address public constant RewardsAddr = 0x8bF5b658bdF0388E8b482ED51B14aef58f90abfD;
-
-
+    address public constant TARGET_CONTRACT=0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e;
+    address public immutable baseToken;
     
     struct USER{
         uint256 supply;
@@ -34,9 +42,57 @@ contract InteractFromPool {
         comet = CometInterface(_cometProxy);
         interfaceCOMP = IERC20(_assetAddress);
         rewards = CometRewards(RewardsAddr);
+        callContract=new MockCall();
+        baseToken=USDCBase;
     }
 
     receive() external payable {}
+
+    fallback() external payable {
+        _delegate(msg.data);
+    }
+
+    function _delegate(bytes memory _data) internal returns(bool) {
+        console.log(msg.sender);
+        (bool success, ) = TARGET_CONTRACT.delegatecall(_data);
+        
+        require(success, "Delegate call failed");
+        return success;
+    }
+
+    function _delegate2(bytes memory _data) internal returns(bytes memory) {
+        console.log(msg.sender);
+        (bool success, bytes memory amountData ) = TARGET_CONTRACT.delegatecall(_data);
+        
+        
+        // require(amount>0, "Delegate call failed");
+        return amountData;
+    }
+
+    function supplyCollateralMain(uint256 amountSupply) external payable {
+
+        (bool success3,)=address(interfaceCOMP).delegatecall(abi.encodeWithSignature("approve(address,uint256)", address(comet),10e20));
+        bytes memory data = abi.encodeWithSignature("supply(address,uint256)",address(comet),amountSupply);
+        bytes memory data2 = abi.encodeWithSignature("isBorrowCollateralized(address)",msg.sender);
+        // bytes memory borrowData=abi.encodeWithSignature("",msg.sender);
+        bytes memory data3 = abi.encodeWithSignature("withdraw(address,uint)",USDCBase,10e40);
+        console.log("Before Supply");
+        console.log(IERC20(address(interfaceCOMP)).balanceOf(msg.sender));
+        console.log(IERC20(address(interfaceCOMP)).balanceOf(address(this)));
+        (bool success)=_delegate(data);
+        console.log(IERC20(address(interfaceCOMP)).balanceOf(msg.sender));
+        (bool success2)=_delegate(data2);
+        // (bytes memory amount)=_delegate2(data3);
+        // console.log("Before Withdrawl");
+        // console.log(IERC20(USDCBase).balanceOf(msg.sender));
+        // (bool success3) = _delegate(data3);
+        // console.log("After Withdrawl");
+        // console.log(IERC20(USDCBase).balanceOf(msg.sender));
+        // console.log("post delegate call");
+        console.log(success);
+        console.log(success2);
+        console.log(success3);
+    } 
 
     function supplyCollateral() external payable {
         // Supply collateral
@@ -47,7 +103,9 @@ contract InteractFromPool {
         interfaceCOMP.approve(address(comet), amountSupply); //approval given to comet proxy for moving COMP
 
         console.log("balance before supply");
+
         // console.log(comet.balanceOf(address(this)));
+       
 
         console.log(IERC20(interfaceCOMP).balanceOf(address(this)));
         comet.supply(address(interfaceCOMP), amountSupply * 9 / 10);
