@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "../../compoundContracts/CometInterface.sol";
 import "../../compoundContracts/CometRewards.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "../../compoundContracts/CometStorage.sol";
 import {console} from "forge-std/Test.sol";
 
 interface IWETH is IERC20 {
@@ -18,7 +19,7 @@ contract MockCall{
     }
 }
 
-contract InteractFromPool {
+contract InteractFromPool is CometStorage {
     CometRewards public rewards;
     CometInterface public comet;
     IERC20 public interfaceCOMP;
@@ -26,7 +27,9 @@ contract InteractFromPool {
     address public constant USDCBase = 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
     address public constant RewardsAddr = 0x8bF5b658bdF0388E8b482ED51B14aef58f90abfD;
     address public constant TARGET_CONTRACT=0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e;
-    address public immutable baseToken;
+    address public baseToken;
+    // uint104 internal totalSupplyBase;
+    // uint104 internal totalBorrowBase;
     
     struct USER{
         uint256 supply;
@@ -72,15 +75,21 @@ contract InteractFromPool {
     function supplyCollateralMain(uint256 amountSupply) external payable {
 
         (bool success3,)=address(interfaceCOMP).delegatecall(abi.encodeWithSignature("approve(address,uint256)", address(comet),10e20));
+      
         bytes memory data = abi.encodeWithSignature("supply(address,uint256)",address(comet),amountSupply);
         bytes memory data2 = abi.encodeWithSignature("isBorrowCollateralized(address)",msg.sender);
         // bytes memory borrowData=abi.encodeWithSignature("",msg.sender);
         bytes memory data3 = abi.encodeWithSignature("withdraw(address,uint)",USDCBase,10e40);
         console.log("Before Supply");
+        console.logInt(userBasic[msg.sender].principal);
+        (bool success4, ) = TARGET_CONTRACT.delegatecall(abi.encodeWithSignature("accrueInternal()"));
+        require(success4, "Accrue failed");
         console.log(IERC20(address(interfaceCOMP)).balanceOf(msg.sender));
         console.log(IERC20(address(interfaceCOMP)).balanceOf(address(this)));
+        
         (bool success)=_delegate(data);
-        console.log(IERC20(address(interfaceCOMP)).balanceOf(msg.sender));
+        console.logInt(userBasic[msg.sender].principal);
+        // console.log(IERC20(address(interfaceCOMP)).balanceOf(msg.sender));
         (bool success2)=_delegate(data2);
         // (bytes memory amount)=_delegate2(data3);
         // console.log("Before Withdrawl");
